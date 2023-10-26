@@ -34,8 +34,19 @@ function App() {
       {tokens.map(v => <span>{v.text}</span>)}
       <br />
       <br />
-      <div style={{ fontSize: 20, padding: 10, color: "grey", backgroundColor: "#444" }}>
-        {tokens.map(v => <span style={{ color: COLORS[parseInt(v.enPos.code)] }}>{v.text}</span>)}
+      <div
+        style={{ fontSize: 20, padding: 10, color: "grey", backgroundColor: "#444" }}>
+        {tokens.map(v => <span
+          onClick={() => {
+            fetch("/translate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain"
+              },
+              body: v.text
+            }).then(r => r.json()).then(console.log)
+          }}
+          style={{ color: COLORS[parseInt(v.enPos.code)] }}>{v.text}</span>)}
       </div>
     </>
   )
