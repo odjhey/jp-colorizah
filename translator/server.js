@@ -29,9 +29,9 @@ fastify.post('/translate', async function handler(request, reply) {
 Return simple english definitions, including furigana readings. 
 Expect phrases and or single words. reply in below format
 
-word: japanese here
-english: english definition here
-furigana: ふりがな
+f: ふりがな
+w: japanese here
+e: english definition here
 ` },
       { role: "user", content: body }
     ],

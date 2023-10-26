@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import './App.css'
 
 import source from './source.json'
@@ -28,15 +29,18 @@ const COLORS = [
 
 function App() {
 
+  const [definition, setDefinition] = useState('')
+
   const tokens = source
   return (
     <>
-      {tokens.map(v => <span>{v.text}</span>)}
+      {tokens.map((v, i) => <span key={i}>{v.text}</span>)}
       <br />
       <br />
       <div
         style={{ fontSize: 20, padding: 10, color: "grey", backgroundColor: "#444" }}>
-        {tokens.map(v => <span
+        {tokens.map((v, i) => <span
+          key={i}
           onClick={() => {
             fetch("/translate", {
               method: "POST",
@@ -44,9 +48,12 @@ function App() {
                 "Content-Type": "text/plain"
               },
               body: v.text
-            }).then(r => r.json()).then(console.log)
+            }).then(r => r.json()).then(v => setDefinition(v))
           }}
           style={{ color: COLORS[parseInt(v.enPos.code)] }}>{v.text}</span>)}
+      </div>
+      <div>
+        {JSON.stringify(definition.body ?? "").replaceAll("\\n", " ----  ")}
       </div>
     </>
   )
