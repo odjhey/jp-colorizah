@@ -42,6 +42,7 @@ fastify.post('/segmentize', async function handler(request, reply) {
     { j: '接続詞', code: '9', e: 'Conjunction' },
     { j: 'フィラー', code: '0', e: 'Filler' },
     { j: 'x', code: '11', e: 'Unknown' },
+    { j: '感動詞', code: '12', e: 'Interjections' },
 
   ]
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import './App.css'
 
 import source from './source.json'
@@ -25,15 +25,39 @@ const COLORS = [
   '#FFC085', // pastel tangerine
   '#FFA6A6', // pastel rose
   '#DAA6FF', // pastel lilac
+  '#FF8000', // Bright Orange
 ]
 
 function App() {
 
   const [definition, setDefinition] = useState('')
+  const [textRawSegmented, setTextRawSegmented] = useState('')
+  const [textRaw, setTextRaw] = useState('')
 
-  const tokens = source
+  const tokens = textRawSegmented?.body ?? source
+  console.log({ tokens })
   return (
     <>
+      <div>
+        <form onSubmit={(e) => {
+          e.preventDefault()
+          console.log(textRaw)
+
+          fetch("/segmentize", {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain"
+            },
+            body: textRaw
+          }).then(r => r.json()).then(v => setTextRawSegmented(v))
+
+
+
+        }}>
+          <textarea name="raw" onChange={(e) => { setTextRaw(e.target.value) }} value={textRaw}></textarea>
+          <button>submit</button>
+        </form>
+      </div>
       {tokens.map((v, i) => <span key={i}>{v.text}</span>)}
       <br />
       <br />
@@ -54,6 +78,11 @@ function App() {
       </div>
       <div>
         {JSON.stringify(definition.body ?? "").replaceAll("\\n", " ----  ")}
+      </div>
+      <div>
+
+        {JSON.stringify(textRawSegmented)}
+
       </div>
     </>
   )
