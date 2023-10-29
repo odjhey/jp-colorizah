@@ -1,7 +1,9 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import './App.css'
 
 import source from './source.json'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { tenFastDefault } from './default-values'
 
 const COLORS = [
   //  '#FF0000', // Bright Red
@@ -28,7 +30,58 @@ const COLORS = [
   '#FF8000', // Bright Orange
 ]
 
+
+const router = createBrowserRouter([
+  { path: "/", element: <App2></App2> },
+  { path: "/2", element: <Tr></Tr> }
+])
+
+function Tr() {
+
+  const [textRaw, setTextRaw] = useState(tenFastDefault)
+  const [definition, setDefinition] = useState('')
+  const [selected, setSelected] = useState("")
+
+  return <div>
+    <div className='p-2 text-7xl'>
+      {selected}
+    </div>
+    <div className='text-3xl'>
+      {JSON.stringify(definition.body ?? "").replaceAll("\\n", " | ")}
+    </div>
+    <form onSubmit={(e) => {
+      e.preventDefault()
+    }}>
+      <textarea className='textarea textarea-bordered' name="raw" onChange={(e) => {
+        setTextRaw(e.target.value)
+      }} value={textRaw}></textarea>
+      <button type='submit'>submit</button>
+    </form>
+    <div>
+      <ul>
+        {textRaw.split('\n').map((v, i) => <li className='text-2xl' key={i}
+          onClick={() => {
+            setSelected(v)
+            fetch("/translate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain"
+              },
+              body: v
+            }).then(r => r.json()).then(v => setDefinition(v))
+          }}
+        >{v}</li>)}
+      </ul>
+    </div>
+  </div>
+}
+
+
 function App() {
+  return <RouterProvider router={router}></RouterProvider>
+}
+
+function App2() {
 
   const [definition, setDefinition] = useState('')
   const [textRawSegmented, setTextRawSegmented] = useState('')
