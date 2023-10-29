@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import './App.css'
 
 import source from './source.json'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 
 const COLORS = [
   //  '#FF0000', // Bright Red
@@ -28,7 +29,53 @@ const COLORS = [
   '#FF8000', // Bright Orange
 ]
 
+
+const router = createBrowserRouter([
+  { path: "/", element: <App2></App2> },
+  { path: "/2", element: <Tr></Tr> }
+])
+
+function Tr() {
+
+  const [textRaw, setTextRaw] = useState('')
+  const [definition, setDefinition] = useState('')
+
+  return <div>
+    <div>
+      {JSON.stringify(definition.body ?? "").replaceAll("\\n", " ----  ")}
+    </div>
+    <form onSubmit={(e) => {
+      e.preventDefault()
+    }}>
+      <textarea name="raw" onChange={(e) => {
+        setTextRaw(e.target.value)
+      }} value={textRaw}></textarea>
+      <button type='submit'>submit</button>
+    </form>
+    <div>
+      <ul>
+        {textRaw.split('\n').map((v, i) => <li key={i}
+          onClick={() => {
+            fetch("/translate", {
+              method: "POST",
+              headers: {
+                "Content-Type": "text/plain"
+              },
+              body: v
+            }).then(r => r.json()).then(v => setDefinition(v))
+          }}
+        >{v}</li>)}
+      </ul>
+    </div>
+  </div>
+}
+
+
 function App() {
+  return <RouterProvider router={router}></RouterProvider>
+}
+
+function App2() {
 
   const [definition, setDefinition] = useState('')
   const [textRawSegmented, setTextRawSegmented] = useState('')
